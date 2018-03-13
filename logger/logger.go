@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	Info  *log.Logger
-	Error *log.Logger
+	Info    *log.Logger
+	Error   *log.Logger
 	Warning *log.Logger
 	Default *log.Logger // write to both default log-file and stdout
 )

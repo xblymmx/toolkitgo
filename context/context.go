@@ -11,11 +11,10 @@ context for http.Request
  */
 
 var (
-	data = make(map[*http.Request]map[interface{}]interface{})
+	data  = make(map[*http.Request]map[interface{}]interface{})
 	datat = make(map[*http.Request]int64)
-	mux sync.RWMutex
+	mux   sync.RWMutex
 )
-
 
 func Get(r *http.Request, key interface{}) interface{} {
 	mux.RLock()
@@ -111,7 +110,7 @@ func Purge(maxAge int) int {
 }
 
 func ClearHandler(handler http.HandlerFunc) http.Handler {
-	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer Clear(r)
 		handler.ServeHTTP(w, r)
 	})

@@ -9,7 +9,6 @@ import (
 	"runtime"
 )
 
-
 type Item struct {
 	Object     interface{}
 	Expiration int64
@@ -37,7 +36,7 @@ type cache struct {
 	items             map[string]Item
 	mu                sync.RWMutex
 	onEvicted         func(string, interface{})
-	janitor *janitor
+	janitor           *janitor
 }
 
 func (c *cache) Set(key string, val interface{}, d time.Duration) {
@@ -109,7 +108,6 @@ func (c *cache) Get(key string) (interface{}, bool) {
 		return nil, false
 	}
 
-
 	c.mu.RUnlock()
 	return item.Object, true
 }
@@ -138,7 +136,6 @@ func (c *cache) GetWithExpiration(key string) (interface{}, time.Time, bool) {
 	return item.Object, time.Time{}, true
 }
 
-
 func (c *cache) get(key string) (interface{}, bool) {
 	item, found := c.items[key]
 	if !found {
@@ -153,7 +150,6 @@ func (c *cache) get(key string) (interface{}, bool) {
 
 	return item.Object, true
 }
-
 
 func (c *cache) Increment(key string, n int64) error {
 	c.mu.Lock()
@@ -241,7 +237,7 @@ func (c *cache) Decrement(key string, n int64) error {
 	return nil
 }
 
-func (c *cache) Delete(key string)  {
+func (c *cache) Delete(key string) {
 	c.mu.Lock()
 	v, evicted := c.delete(key)
 	c.mu.Unlock()
@@ -264,7 +260,7 @@ func (c *cache) delete(key string) (interface{}, bool) {
 }
 
 type KeyAndValue struct {
-	key string
+	key   string
 	value interface{}
 }
 
@@ -341,7 +337,7 @@ func (c *cache) Flush() {
 
 type janitor struct {
 	Interval time.Duration
-	stop chan bool
+	stop     chan bool
 }
 
 func (j *janitor) Run(c *cache) {
@@ -349,9 +345,9 @@ func (j *janitor) Run(c *cache) {
 
 	for {
 		select {
-		case <- tick.C:
+		case <-tick.C:
 			c.DeleteExpired()
-		case <- j.stop:
+		case <-j.stop:
 			tick.Stop()
 			return
 		}
@@ -365,7 +361,7 @@ func StopJanitor(c *Cache) {
 func RunJanitor(c *cache, d time.Duration) {
 	j := &janitor{
 		Interval: d,
-		stop: make(chan bool),
+		stop:     make(chan bool),
 	}
 	c.janitor = j
 
@@ -379,7 +375,7 @@ func newCache(d time.Duration, m map[string]Item) *cache {
 
 	c := &cache{
 		defaultExpiration: d,
-		items: m,
+		items:             m,
 	}
 
 	return c
@@ -405,6 +401,3 @@ func NewCache(defaultExpiration time.Duration, interval time.Duration) *Cache {
 func NewFrom(defaultExpiration time.Duration, interval time.Duration, items map[string]Item) *Cache {
 	return newCacheWithJanitor(defaultExpiration, interval, items)
 }
-
-
-
