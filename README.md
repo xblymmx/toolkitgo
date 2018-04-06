@@ -1,5 +1,10 @@
 # golang toolkit
 
 ## WIP
+- [x] cache tool
+- [x] another context implementation
+- [x] simple logger wrapper tool
+- [x] grpc pool
+- [ ] http router
 
-## todo: add comments, context tests, logger tests, cache tests
+## todo: add comments, tests
